@@ -2,7 +2,6 @@
 #include <ESP8266WiFi.h>
 #include <Wire.h>
 #include <PubSubClient.h>
-#include <Adafruit_HDC1000.h>
 #include "DHT.h"
 
 #define DHTPIN 2     // what digital pin the DHT22 is conected to
@@ -14,16 +13,15 @@ DHT dht(DHTPIN, DHTTYPE);
 #define wifi_ssid "IoT"
 #define wifi_password "Welkom123"
 
-#define mqtt_server "169.254.172.203"
+#define mqtt_server "172.24.1.1"
 #define mqtt_user "user"
 #define mqtt_password "pwd"
 
-#define humidity_topic "sensor/humidity/5"
-#define temperature_topic "sensor/temperature/5"
+#define humidity_topic "sensor/humidity/3"
+#define temperature_topic "sensor/temperature/3"
 
 WiFiClient espClient;
 PubSubClient client(espClient);
-Adafruit_HDC1000 hdc = Adafruit_HDC1000();
 
 void setup() {
   Serial.begin(9600);
