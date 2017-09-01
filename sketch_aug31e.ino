@@ -3,16 +3,23 @@
 #include <Wire.h>
 #include <PubSubClient.h>
 #include <Adafruit_HDC1000.h>
+#include "DHT.h"
+
+#define DHTPIN 2     // what digital pin the DHT22 is conected to
+#define DHTTYPE DHT22   // there are multiple kinds of DHT sensors
+
+DHT dht(DHTPIN, DHTTYPE);
+
 
 #define wifi_ssid "IoT"
 #define wifi_password "Welkom123"
 
 #define mqtt_server "169.254.172.203"
-#define mqtt_user "your_username"
-#define mqtt_password "your_password"
+#define mqtt_user "user"
+#define mqtt_password "pwd"
 
-#define humidity_topic "sensor/humidity"
-#define temperature_topic "sensor/temperature"
+#define humidity_topic "sensor/humidity/5"
+#define temperature_topic "sensor/temperature/5"
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -26,11 +33,6 @@ void setup() {
   // Set SDA and SDL ports
   Wire.begin(2, 14);
 
-  // Start sensor
-  if (!hdc.begin()) {
-    Serial.println("Couldn't find sensor!");
-    while (1);
-  }
 }
 
 void setup_wifi() {
@@ -92,8 +94,11 @@ void loop() {
   if (now - lastMsg > 1000) {
     lastMsg = now;
 
-    float newTemp = hdc.readTemperature();
-    float newHum = hdc.readHumidity();
+    // Reading temperature or humidity takes about 250 milliseconds!
+    // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
+    float newHum = dht.readHumidity();
+    // Read temperature as Celsius (the default)
+    float newTemp = dht.readTemperature();
 
     if (checkBound(newTemp, temp, diff)) {
       temp = newTemp;
